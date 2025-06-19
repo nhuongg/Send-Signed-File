@@ -4,8 +4,19 @@
 
 Toàn bộ logic xử lý được xây dựng bằng Python với thư viện `cryptography`, và giao diện người dùng được hiển thị trên nền web thông qua framework Flask.
 
-![Giao diện ứng dụng](Picture/Screenshot (96).png)
-*(Bạn hãy thay thế link ảnh trên bằng ảnh chụp màn hình ứng dụng web của chính bạn)*
+---
+
+## Giao diện ứng dụng
+
+ - Giao diện ký số
+<p align="center">  
+   <img src="Picture/Screenshot (96).png" alt="Ảnh minh họa" width="850" height="480">  
+</p>
+
+ - Giao diện xác thực
+<p align="center">  
+   <img src="Picture/Screenshot (96).png" alt="Ảnh minh họa" width="850" height="480">  
+</p>
 
 ---
 
@@ -40,8 +51,8 @@ Quy trình mã hóa dựa trên nguyên tắc của mã hóa bất đối xứng
 **1. Tải mã nguồn về**
 
 ```bash
-git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
-cd your-repository-name
+git clone [https://github.com/nhuongg/Send-Signed-File.git](https://github.com/your-username/your-repository-name.git)
+cd Send-Signed-File
 ```
 *(Thay `your-username/your-repository-name` bằng thông tin repo của bạn)*
 
@@ -140,4 +151,4 @@ Giao diện web rất trực quan và dễ sử dụng.
 
 ## License
 
-Dự án này được cấp phép theo Giấy phép MIT.
+Dự án này được tạo để phục vụ cho mục đích học tập.
