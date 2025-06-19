@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Ký số & Xác thực File</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(to right, #161717, #8b0404); 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: #141212cf;
+            backdrop-filter: blur(5px);
+            padding: 30px 40px;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+            width: 420px;
+            color: #ffffff;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #ffffff;
+        }
+        p {
+            margin: 15px 0 5px 0;
+            font-weight: bold;
+        }
+        input[type="text"], select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-top: 6px;
+            border-radius: 8px;
+            border: 1px solid #555;
+            background-color: #333;
+            box-sizing: border-box;
+            font-size: 14px;
+            color: #fff;
+        }
+        .file-label {
+            background:#940000;
+            padding:12px;
+            border-radius:8px;
+            display:block;
+            text-align:center;
+            cursor:pointer;
+            transition: background 0.3s ease;
+        }
+        .file-label:hover {
+            background: #b30606;
+        }
+        button {
+            background: linear-gradient(to right, #000000, #b30606); 
+            color: rgb(255, 255, 255);
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: background 0.3s ease;
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        button:hover {
+            background: linear-gradient(to right, #222, #d30707);
+        }
+        /* Styling for flash messages */
+        .flash {
+            padding: 10px;
+            margin-top: 15px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+        .flash.success {
+            background-color: #0c540f;
+            color: white;
+        }
+        .flash.error {
+            background-color: #721c24;
+            color: white;
+        }
+        .generate-keys-link {
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+            background-color: #004cbe;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Ký số / Xác thực file</h2>
+
+        {% if not keys_exist %}
+            <a href="{{ url_for('generate_keys_route') }}" class="generate-keys-link">Bấm vào đây để tạo cặp khóa lần đầu</a>
+        {% endif %}
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="flash {{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form method="POST" enctype="multipart/form-data" action="{{ url_for('index') }}">
+            <p>1. Chọn chế độ:</p>
+            <select name="mode" id="mode-select" required>
+                <option value="sign">Ký số</option>
+                <option value="verify">Xác thực</option>
+            </select>
+
+            <p>2. Chọn file gốc:</p>
+            <label for="file-input" class="file-label" id="file-label-text">Chọn File</label>
+            <input type="file" id="file-input" name="file" style="display:none;" required>
+
+            <div id="signature-input-container" style="display:none;">
+                <p>3. Chọn file chữ ký (.sig):</p>
+                <label for="signature-file-input" class="file-label" id="sig-label-text">Chọn File Chữ Ký</label>
+                <input type="file" id="signature-file-input" name="signature_file" style="display:none;">
+            </div>
+
+            <button type="submit">Thực hiện</button>
+        </form>
+    </div>
+
+    <script>
+        const modeSelect = document.getElementById('mode-select');
+        const signatureContainer = document.getElementById('signature-input-container');
+
+        // Ẩn/hiện ô chọn file chữ ký tùy theo chế độ
+        modeSelect.addEventListener('change', function() {
+            if (this.value === 'verify') {
+                signatureContainer.style.display = 'block';
+            } else {
+                signatureContainer.style.display = 'none';
+            }
+        });
+
+        // Cập nhật tên file đã chọn lên label
+        const fileInput = document.getElementById('file-input');
+        const fileLabel = document.getElementById('file-label-text');
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                fileLabel.textContent = fileInput.files[0].name;
+            } else {
+                fileLabel.textContent = 'Chọn File';
+            }
+        });
+
+        const sigFileInput = document.getElementById('signature-file-input');
+        const sigLabel = document.getElementById('sig-label-text');
+        sigFileInput.addEventListener('change', () => {
+            if (sigFileInput.files.length > 0) {
+                sigLabel.textContent = sigFileInput.files[0].name;
+            } else {
+                sigLabel.textContent = 'Chọn File Chữ Ký';
+            }
+        });
+    </script>
+</body>
+</html>
