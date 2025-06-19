@@ -4,7 +4,7 @@
 
 Toàn bộ logic xử lý được xây dựng bằng Python với thư viện `cryptography`, và giao diện người dùng được hiển thị trên nền web thông qua framework Flask.
 
-![Giao diện ứng dụng](httpsd://i.imgur.com/B9B1pCf.png)
+![Giao diện ứng dụng](Picture/Screenshot (96).png)
 *(Bạn hãy thay thế link ảnh trên bằng ảnh chụp màn hình ứng dụng web của chính bạn)*
 
 ---
