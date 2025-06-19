@@ -1,90 +1,143 @@
-# Công cụ Ký số và Xác thực File bằng Python
+# Ứng dụng Ký số & Xác thực File (Giao diện Web với Python + Flask)
 
-Đây là một ứng dụng command-line đơn giản được viết bằng Python để minh họa quá trình tạo chữ ký số cho file và xác thực chúng, dựa trên thuật toán mã hóa bất đối xứng (RSA) và hàm băm an toàn (SHA-256).
+Đây là một ứng dụng web minh họa quy trình tạo chữ ký số và xác thực chữ ký cho file. Người dùng có thể tải file lên, thực hiện ký số bằng khóa bí mật (private key) và sau đó xác thực tính toàn vẹn cũng như nguồn gốc của file bằng khóa công khai (public key).
+
+Toàn bộ logic xử lý được xây dựng bằng Python với thư viện `cryptography`, và giao diện người dùng được hiển thị trên nền web thông qua framework Flask.
+
+![Giao diện ứng dụng](httpsd://i.imgur.com/B9B1pCf.png)
+*(Bạn hãy thay thế link ảnh trên bằng ảnh chụp màn hình ứng dụng web của chính bạn)*
+
+---
+
+## Công nghệ sử dụng
+
+* **Backend**: Python 3, Flask
+* **Thư viện mã hóa**: `cryptography` (cho thuật toán RSA và hàm băm SHA-256)
+* **Frontend**: HTML5, CSS3, JavaScript (để xử lý giao diện động)
+
+---
 
 ## Sơ đồ hoạt động
 
-Ứng dụng được xây dựng dựa trên luồng logic chuẩn của chữ ký số:
+Quy trình mã hóa dựa trên nguyên tắc của mã hóa bất đối xứng:
 
-### 1. Quy trình Ký (Signing)
-![Quy trình ký](https://i.imgur.com/your-image-link-here.png)  - **Data (File)**: File gốc cần được ký.
-- **Hash function**: File được đưa qua hàm băm (SHA-256) để tạo ra một chuỗi đại diện có độ dài cố định (hash value).
-- **Encrypts using signer's private key**: Giá trị băm này sau đó được "mã hóa" bằng **khóa bí mật (private key)** của người gửi. Kết quả của quá trình này chính là **chữ ký số (digital signature)**.
-- **Attach to data**: Chữ ký số được đính kèm (hoặc lưu thành một file riêng) với dữ liệu gốc để gửi đi.
+1.  **Quy trình Ký (Signing)**:
+    * File được băm (hash) bằng thuật toán SHA-256 để tạo ra một chuỗi dữ liệu đại diện duy nhất.
+    * Giá trị băm này được mã hóa bằng **khóa bí mật (private key)** của người gửi. Kết quả chính là **chữ ký số**.
+    * Chữ ký được lưu thành một file riêng (`.sig`).
 
-### 2. Quy trình Xác thực (Verification)
-![Quy trình xác thực](https://i.imgur.com/your-image-link-here.png) - **Data & Signature**: Người nhận nhận được cả file gốc và file chữ ký.
-- **Hash function**: Người nhận dùng đúng hàm băm (SHA-256) để tính toán lại giá trị băm của file gốc nhận được. Ta gọi đây là `hash_1`.
-- **Decrypt using signer's public key**: Người nhận dùng **khóa công khai (public key)** của người gửi để "giải mã" chữ ký số. Kết quả thu được là giá trị băm ban đầu do người gửi tạo ra. Ta gọi đây là `hash_2`.
-- **Compare**: Hệ thống so sánh `hash_1` và `hash_2`.
-    - Nếu **khớp nhau**: Chữ ký hợp lệ. Điều này chứng tỏ file không bị thay đổi trên đường truyền (tính toàn vẹn) và file đúng là của người sở hữu private key (tính xác thực).
-    - Nếu **không khớp**: Chữ ký không hợp lệ. File đã bị chỉnh sửa hoặc chữ ký không thuộc về file này.
+2.  **Quy trình Xác thực (Verification)**:
+    * Người nhận tính toán lại giá trị băm của file gốc nhận được.
+    * Người nhận dùng **khóa công khai (public key)** của người gửi để giải mã chữ ký, lấy ra giá trị băm ban đầu.
+    * Nếu hai giá trị băm này **trùng khớp**, chữ ký hợp lệ, file được đảm bảo toàn vẹn và đúng nguồn gốc.
 
-## Yêu cầu
+---
 
-- Python 3.6+
-- Thư viện `cryptography`
+## Cài đặt & Chạy dự án
 
-Bạn có thể cài đặt thư viện cần thiết bằng pip:
+Để chạy dự án này trên máy của bạn, hãy làm theo các bước sau:
+
+**1. Tải mã nguồn về**
+
 ```bash
-pip install cryptography
+git clone [https://github.com/your-username/your-repository-name.git](https://github.com/your-username/your-repository-name.git)
+cd your-repository-name
 ```
+*(Thay `your-username/your-repository-name` bằng thông tin repo của bạn)*
+
+**2. Tạo và kích hoạt môi trường ảo (Khuyến khích)**
+
+Điều này giúp cô lập các thư viện của dự án, tránh xung đột.
+
+* Trên macOS/Linux:
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate
+    ```
+* Trên Windows:
+    ```bash
+    python -m venv venv
+    .\venv\Scripts\activate
+    ```
+
+**3. Cài đặt các thư viện cần thiết**
+
+Dự án có 2 thư viện chính là Flask và cryptography.
+
+```bash
+pip install Flask cryptography
+```
+
+**4. Chạy ứng dụng**
+
+Sau khi cài đặt xong, chạy file `app.py` để khởi động server:
+
+```bash
+python app.py
+```
+
+Terminal sẽ hiển thị một dòng thông báo cho biết server đang chạy, thường là:
+`* Running on http://127.0.0.1:5000`
+
+**5. Truy cập ứng dụng**
+
+Mở trình duyệt web (Chrome, Firefox,...) và truy cập vào địa chỉ: **http://127.0.0.1:5000**
+
+---
 
 ## Cách sử dụng
 
-Tất cả các lệnh được thực thi qua file `digital_signature_tool.py`.
+Giao diện web rất trực quan và dễ sử dụng.
 
-### Bước 1: Tạo cặp khóa
-Đầu tiên, bạn cần tạo một cặp khóa private/public. Chạy lệnh sau trong terminal:
+**1. Tạo cặp khóa (Lần đầu tiên)**
+* Nếu bạn chưa có cặp khóa `private_key.pem` và `public_key.pem`, một nút màu xanh sẽ xuất hiện.
+* Hãy nhấn vào nút **"Bấm vào đây để tạo cặp khóa lần đầu"**.
+* Trang sẽ tự động tải lại và một thông báo thành công sẽ hiện ra.
 
-```bash
-python digital_signature_tool.py generate
+**2. Để ký một file**
+* Tại mục "1. Chọn chế độ", chọn **"Ký số"**.
+* Nhấn vào nút **"Chọn File"** và chọn file bạn muốn ký từ máy tính.
+* Nhấn nút **"Thực hiện"**.
+* Trình duyệt sẽ tự động tải về một file có đuôi `.sig`. Đây chính là file chữ ký của bạn.
+
+**3. Để xác thực một chữ ký**
+* Tại mục "1. Chọn chế độ", chọn **"Xác thực"**.
+* Hai ô chọn file sẽ hiện ra.
+* Tại "2. Chọn file gốc", hãy chọn file dữ liệu gốc (ví dụ: `document.pdf`).
+* Tại "3. Chọn file chữ ký", hãy chọn file `.sig` tương ứng (ví dụ: `document.pdf.sig`).
+* Nhấn nút **"Thực hiện"**.
+* Một thông báo sẽ xuất hiện ở đầu trang cho biết chữ ký **HỢP LỆ** hay **KHÔNG HỢP LỆ**.
+
+---
+
+## Cấu trúc thư mục
+
+```
+/digital_signature_webapp/
+|
+|-- app.py             # File Python chính chứa server Flask
+|
+|-- /templates/
+|   |-- index.html     # File giao diện HTML
+|
+|-- /uploads/
+|   # Thư mục tạm thời chứa các file được upload lên
+|
+|-- private_key.pem    # (Được tạo tự động)
+|-- public_key.pem     # (Được tạo tự động)
+|
+|-- README.md          # File hướng dẫn này
 ```
 
-Lệnh này sẽ tạo ra 2 file trong cùng thư mục:
-- `private_key.pem`: **KHÓA BÍ MẬT**. Giữ file này tuyệt đối an toàn và không bao giờ chia sẻ nó.
-- `public_key.pem`: **KHÓA CÔNG KHAI**. Bạn có thể chia sẻ file này cho bất kỳ ai cần xác thực chữ ký của bạn.
+---
 
-### Bước 2: Ký một file
-Giả sử bạn có một file tên là `hop-dong.pdf` và muốn ký nó.
+## ⚠️ Lưu ý về Bảo mật
 
-```bash
-python digital_signature_tool.py sign --file hop-dong.pdf --private-key private_key.pem
-```
+* Đây là một dự án **minh họa** cho mục đích học tập. Không nên sử dụng trong môi trường sản phẩm thực tế mà không có sự đánh giá và kiểm thử bảo mật chuyên sâu.
+* File `private_key.pem` là **tuyệt đối bí mật**. Bất kỳ ai có được file này đều có thể giả mạo chữ ký của bạn. Hãy bảo vệ nó cẩn thận.
 
-Sau khi chạy, một file chữ ký mới sẽ được tạo ra với tên `hop-dong.pdf.sig`. Bây giờ bạn có thể gửi cả `hop-dong.pdf` và `hop-dong.pdf.sig` cho người khác.
-
-### Bước 3: Xác thực một chữ ký
-Người nhận (đã có file `public_key.pem` của bạn) sẽ tiến hành xác thực.
-
-#### Trường hợp 1: Chữ ký hợp lệ
-```bash
-python digital_signature_tool.py verify --file hop-dong.pdf --signature hop-dong.pdf.sig --public-key public_key.pem
-```
-
-**Kết quả mong đợi:**
-```
-✅ Chữ ký HỢP LỆ.
--> File 'hop-dong.pdf' là toàn vẹn và được xác thực.
-```
-
-#### Trường hợp 2: Dữ liệu đã bị thay đổi (Chữ ký không hợp lệ)
-Giả sử ai đó đã chỉnh sửa file `hop-dong.pdf` sau khi nó được ký. Khi xác thực:
-
-```bash
-python digital_signature_tool.py verify --file hop-dong.pdf --signature hop-dong.pdf.sig --public-key public_key.pem
-```
-
-**Kết quả mong đợi:**
-```
-❌ Chữ ký KHÔNG HỢP LỆ!
--> File 'hop-dong.pdf' có thể đã bị thay đổi hoặc chữ ký không đúng.
-```
-
-## Lưu ý về bảo mật
-
-- **Đây là một dự án minh họa.** Không nên sử dụng trực tiếp trong môi trường sản phẩm (production) mà không có sự đánh giá và kiểm thử bảo mật chuyên sâu.
-- **Bảo vệ Private Key của bạn!** Bất kỳ ai có được private key của bạn đều có thể giả mạo chữ ký của bạn.
+---
 
 ## License
+
 Dự án này được cấp phép theo Giấy phép MIT.
