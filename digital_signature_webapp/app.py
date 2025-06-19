@@ -131,8 +131,16 @@ def generate_keys_route():
     return redirect(url_for('index'))
 
 # --- CHẠY ỨNG DỤNG ---
+
 if __name__ == '__main__':
     # Tạo thư mục uploads nếu chưa có
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
-    app.run(debug=True) # debug=True giúp tự động reload khi bạn sửa code
+
+    # Lấy cổng từ biến môi trường PORT do Render cung cấp
+    # Nếu không tìm thấy biến PORT (ví dụ: chạy trên máy local), mặc định dùng cổng 5000
+    port = int(os.environ.get("PORT", 5000))
+
+    # Chạy ứng dụng Flask, lắng nghe trên tất cả các địa chỉ IP (0.0.0.0)
+    # và trên cổng được lấy từ biến môi trường PORT
+    app.run(debug=True, host='0.0.0.0', port=port)
